@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchEmployee, addEmployee, updateEmployee } from '../saga/action';
+import { updateEmployee } from '../services/EmployeeService';
+import { addEmployee, editEmployee, fetchEmployees } from '../slices/employeeSlice';
+// import { fetchEmployee, addEmployee, updateEmployee } from '../saga/sagas';
 
 const EmployeeComponent = () => {
     const dispatch = useDispatch();
@@ -23,7 +25,7 @@ const EmployeeComponent = () => {
 
     useEffect(() => {
         if (id) {
-            dispatch(fetchEmployee(id));
+            dispatch(fetchEmployees(id));
         }
     }, [id, dispatch]);
 
@@ -55,7 +57,8 @@ const EmployeeComponent = () => {
         const newEmployee = { firstName, lastName, email, password };
         if (validateForm()) {
             if (id) {
-                dispatch(updateEmployee({ id, employee: newEmployee }));
+                // dispatch(updateEmployee({ id, employee: newEmployee }));
+                dispatch(editEmployee({ id, employee: newEmployee }));
             } else {
                 dispatch(addEmployee(newEmployee));
             }

@@ -18,25 +18,24 @@ const ListOfEmployee = () => {
         dispatch(removeEmployee(id));
     };
 
-    const handleNavigate =(employee)=>{
-        navigate('/add-employee')
+    
        
-        
-        createEmployee(employee).then((response) => {
-            console.log(response.data);
-            navigate('/'); 
-        }).catch(error => {
-            console.log(error.response.data);
-        });
+        const updateEmployee =(id)=>{
+                navigate(`/edit-employee/${id}`);
+        }
 
-    }
+           const addNewEmployee =() =>{
+                  navigator('/add-employee')
+               }
+        
+    
 
     console.log(employees)
 
     return (
         <div className='container' style={{margin: '90px'}}>
             <h2 className='text-center'>List Of Employees</h2>
-            <button className='btn btn-primary mb-2' onClick={handleNavigate} >Add Employee</button>
+            <button className='btn btn-primary mb-2' onClick={addNewEmployee} >Add Employee</button>
             {loading && <p>Loading...</p>}
             {error && <p className='text-danger'>{error}</p>}
             <table className='table table-striped table-bordered'>
@@ -57,7 +56,7 @@ const ListOfEmployee = () => {
                             <td>{employee.lastName}</td>
                             <td>{employee.email}</td>
                             <td>
-                                <button className='btn btn-info' onClick={() => navigate(`/edit-employee/${employee.id}`)}>Update</button>
+                                <button className='btn btn-info' onClick={() => updateEmployee(employee.id)}>Update</button>
                                 <button className='btn btn-danger' onClick={() => handleDelete(employee.id)} style={{ marginLeft: '10px' }}>Delete</button>
                             </td>
                         </tr>
