@@ -1,18 +1,18 @@
 package com.eidiko.ems_backend_application.dto;
 
+import com.eidiko.ems_backend_application.entity.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.Set;
 
 
-    @Getter
+@Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-
+@ToString
     public class EmployeeDto {
 
       private long id;
@@ -20,5 +20,5 @@ import lombok.Setter;
         private String lastName ;
         private String email;
         private String password;
-
+        private Set<String> roles;
     }

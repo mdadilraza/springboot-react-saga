@@ -10,6 +10,8 @@ import com.eidiko.ems_backend_application.security.JwtGenerator;
 import com.eidiko.ems_backend_application.service.EmployeeService;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 //@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @CrossOrigin("*")
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthController {
 
     @Autowired
@@ -48,14 +51,16 @@ public class AuthController {
     private JwtGenerator jwtGenerator;
     @CrossOrigin("*")
     @PostMapping("/register")
-    public ResponseEntity<?> registerStudent(@RequestBody RegisterRequest registerRequest) {
-        employeeService.registerEmployee(registerRequest);
+    public ResponseEntity<?> registerStudent( @Valid  @RequestBody RegisterRequest registerRequest) {
+        log.info("registerRequest: {}", registerRequest);
+        RegisterRequest savedEmployee = employeeService.registerEmployee(registerRequest);
+        log.info("savedEmployee: {}", savedEmployee);
         return ResponseEntity.ok("Employee registered successfully!");
     }
 
 
         @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -64,7 +69,8 @@ public class AuthController {
 
        // return new ResponseEntity<>(new JwtResponse(token , employeeMapper.mapToEmployeeDto(employeeRepository.findByEmail(loginRequest.getEmail()))), HttpStatus.OK);
         return new ResponseEntity<>(new JwtResponse(token,
-                "Bearer", employeeMapper.mapToEmployeeDto(employeeRepository.findByEmail(loginRequest.getEmail()))), HttpStatus.OK);
+                "Bearer", employeeMapper.mapToEmployeeDto(employeeRepository
+                .findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("user not present")))), HttpStatus.OK);
 
     }
 //    @CrossOrigin("*")

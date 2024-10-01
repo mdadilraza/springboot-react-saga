@@ -1,11 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { listOfEmployess, createEmployee, updateEmployee, deleteEmployee } from '../services/EmployeeService';
+import { listOfEmployess, createEmployee, updateEmployee, deleteEmployee, getEmployee } from '../services/EmployeeService';
 
 // Async Thunks
 export const fetchEmployees = createAsyncThunk('employees/fetchEmployees', async () => {
     const response = await listOfEmployess();
     return response.data;
 });
+
+export const fetchEmployeeById =createAsyncThunk('employees/fetchEmployeeById' , async (id) =>{
+    const response = await getEmployee(id);
+    // const data = await response.json();
+    return response.data; 
+})
 
 export const addEmployee = createAsyncThunk('employees/addEmployee', async (employee) => {
     const response = await createEmployee(employee);
@@ -50,6 +56,17 @@ const employeeSlice = createSlice({
             })
             .addCase(addEmployee.fulfilled, (state, action) => {
                 state.employees.push(action.payload);
+            })
+            .addCase(fetchEmployeeById.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchEmployeeById.fulfilled, (state, action) => {
+                state.loading = false;
+                state.employee = action.payload;
+            })
+            .addCase(fetchEmployeeById.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
             })
             .addCase(editEmployee.fulfilled, (state, action) => {
                 const index = state.employees.findIndex(emp => emp.id === action.payload.id);

@@ -1,6 +1,7 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { fetchEmployees, addEmployee, editEmployee, removeEmployee } from '../slices/employeeSlice';
-import { listOfEmployess, createEmployee, updateEmployee, deleteEmployee } from '../services/EmployeeService';
+import { fetchEmployees, addEmployee, editEmployee, removeEmployee, fetchEmployeeById } from '../slices/employeeSlice';
+import { listOfEmployess, createEmployee, updateEmployee, deleteEmployee, getEmployee } from '../services/EmployeeService';
+import { act } from 'react';
 
 function* fetchEmployeesSaga() {
     try {
@@ -8,6 +9,15 @@ function* fetchEmployeesSaga() {
         yield put(fetchEmployees.fulfilled(response.data));
     } catch (error) {
         yield put(fetchEmployees.rejected(error));
+    }
+}
+function * fetchEmployeeByIdSaga(action) {
+    try {
+        const response = yield call(getEmployee ,action.payload.id) ;
+        yield put(fetchEmployeeById.fulfilled(response.data));
+
+    } catch (error) {
+        yield put(fetchEmployeeById.rejected(error))
     }
 }
 
@@ -43,4 +53,5 @@ export default function* employeeSaga() {
     yield takeEvery(addEmployee.type, addEmployeeSaga);
     yield takeEvery(editEmployee.type, editEmployeeSaga);
     yield takeEvery(removeEmployee.type, removeEmployeeSaga);
+    yield takeEvery(fetchEmployeeById.type ,fetchEmployeeByIdSaga);
 }

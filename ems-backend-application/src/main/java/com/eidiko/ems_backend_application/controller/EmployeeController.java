@@ -2,12 +2,13 @@ package com.eidiko.ems_backend_application.controller;
 
 import com.eidiko.ems_backend_application.dto.EmployeeDto;
 
+import com.eidiko.ems_backend_application.entity.Employee;
 import com.eidiko.ems_backend_application.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,28 +16,26 @@ import java.util.List;
 @CrossOrigin("*")
 @RestController
 @RequestMapping("api/v1/employees")
+@Slf4j
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
 
-
-
-
     //BUILD ADD EMPLOYEE REST API
-
-
     @CrossOrigin("*")
     @PostMapping
-    public ResponseEntity<EmployeeDto> createEmployee(@RequestBody EmployeeDto employeeDto){
-
-      EmployeeDto savedEmployeeDto = employeeService.createEmployee(employeeDto);
-        return new ResponseEntity<>(savedEmployeeDto , HttpStatus.CREATED);
+    @PreAuthorize("hasRole('ADMIN')") // Only ADMIN can access this method
+    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee){
+        log.info("employee : {}" , employee);
+      Employee savedEmployee = employeeService.createEmployee(employee);
+        return new ResponseEntity<>(savedEmployee , HttpStatus.CREATED);
     }
 
     //BUILD GET EMPLOYEE REST API
     @CrossOrigin("*")
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("id") long id){
      EmployeeDto employee =  employeeService.getEmployeeById(id);
      return ResponseEntity.ok(employee );
@@ -46,6 +45,7 @@ public class EmployeeController {
 
     @CrossOrigin("*")
     @GetMapping("")
+    @PreAuthorize("hasRole('ADMIN')") // Only ADMIN can access this method
     public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
 
      List<EmployeeDto>  allEmployees  =employeeService.getAllEmployees();
@@ -53,11 +53,12 @@ public class EmployeeController {
     }
 
     //BUILD UPDATE EMPLOYEE REST API
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE')") // ADMIN and EMPLOYEE can access
     @CrossOrigin("*")
     @PutMapping("{id}")
-    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable long id, @RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable long id, @RequestBody Employee employee) {
 
-     EmployeeDto employeeDto1 =  employeeService.updateEmployee(id ,employeeDto);
+     EmployeeDto employeeDto1 =  employeeService.updateEmployee(id ,employee);
      return   ResponseEntity.ok(employeeDto1);
     }
 
@@ -65,11 +66,12 @@ public class EmployeeController {
     //BUILD DELETE EMPLOYEE REST API
     @CrossOrigin("*")
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')") // Only ADMIN can access this method
     public ResponseEntity<?> deleteEmployee(@PathVariable  long id) {
 
-     EmployeeDto employeeDto  = employeeService.deleteEmployee(id);
+     Employee employee = employeeService.deleteEmployee(id);
 
-        return ResponseEntity.ok(employeeDto);
+        return ResponseEntity.ok(employee);
 
     }
 }

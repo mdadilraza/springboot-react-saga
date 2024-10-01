@@ -10,6 +10,8 @@ import NotFound from './components/NotFound';
 
 function App() {
   return (
+
+   
     <BrowserRouter>
       <HeaderComponent />
       <Routes>

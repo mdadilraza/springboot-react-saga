@@ -8,6 +8,6 @@ export const listOfEmployess =() => axiosInstance.get();
 
 export const createEmployee =(employee) =>axiosInstance.post('', employee);
 export const getEmployee =(employeeId) =>axiosInstance.get('/'+employeeId);
-export const updateEmployee =(employeeId , employee) =>axiosInstance.put('/'+ employeeId ,employee);
+export const updateEmployee =async (employeeId , employee) => await axiosInstance.put('/'+ employeeId ,employee);
 
 export const deleteEmployee =(employeeId) => axiosInstance.delete('/' + employeeId);

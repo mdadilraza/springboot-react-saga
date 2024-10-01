@@ -8,16 +8,16 @@ import java.util.List;
 
 public interface EmployeeService {
 
-    public EmployeeDto createEmployee(EmployeeDto employeeDto);
-    public EmployeeDto getEmployeeById(long id);
+     Employee createEmployee(Employee employee);
+     EmployeeDto getEmployeeById(long id);
 
     List<EmployeeDto> getAllEmployees();
 
-    EmployeeDto updateEmployee(long id , EmployeeDto employeeDto);
+    EmployeeDto updateEmployee(long id , Employee employee);
 
-    EmployeeDto deleteEmployee(long id);
+    Employee deleteEmployee(long id);
 
-    void registerEmployee(RegisterRequest request);
+    RegisterRequest registerEmployee(RegisterRequest request);
 
-  Employee getStudentByEmail(String email);
+     Employee getEmployeeByEmail(String email);
 }

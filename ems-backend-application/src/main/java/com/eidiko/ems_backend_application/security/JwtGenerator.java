@@ -32,7 +32,7 @@ public class JwtGenerator {
         String token = Jwts
                 .builder()
                 .setSubject(username)
-                .claim("roles", roles) // Inclusion of roles in claims
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(secretKey,
@@ -55,12 +55,12 @@ public class JwtGenerator {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
         } catch (Exception ex) {
-            throw new AuthenticationCredentialsNotFoundException("JWT was exprired or incorrect",
+            throw new AuthenticationCredentialsNotFoundException("JWT was expired or incorrect",
                     ex.fillInStackTrace());
         }
     }
 
-    public List<String> getRolesFromJWT(String token) {
+    public List<?> getRolesFromJWT(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secretKey).
                 build().
