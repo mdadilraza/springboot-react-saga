@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import styles from '../components/styles/EntryPage.module.css';
 import { useNavigate } from 'react-router-dom';
 import { loginEmployee, registerEmployee } from '../services/AuthEmployeeService';
+import { loginFailure, loginRequest, loginSuccess } from '../slices/authSlice';
+import { useDispatch } from 'react-redux';
 
 const EntryPage = () => {
     const [currentView, setCurrentView] = useState('signUp');
@@ -12,7 +14,7 @@ const EntryPage = () => {
     const [roles, setRoles] = useState([]); 
 
     const navigate = useNavigate();
-
+    const dispatch =useDispatch();
     const handleRegister = (e) => {
         e.preventDefault();
         const employee = { firstName, lastName, email, password, roles };
@@ -28,19 +30,49 @@ const EntryPage = () => {
             });
     };
 
-        const handleLogin = (e) => {
+    
+    const handleLogin = (e) => {
         e.preventDefault();
         const loginEmp = { email, password };
+        dispatch({type: loginRequest.type, payload: {...loginEmp}});
+    
+        loginEmployee(loginEmp)
+    .then(response => {
         
-        loginEmployee(loginEmp).then(response => {
-            console.log(response);
-            localStorage.setItem("token", response.data.token);
-            navigate('/employees'); 
-        }).catch(error => {
-            console.error(error);
-            navigate('/'); 
-        });
-    };
+        const { token } = response.data; 
+        const userRole = response.data.employeeDto.roles[0];
+        
+        console.log('Token:', token, 'User Role:', userRole);
+        
+
+        if (token && userRole) {
+            // Store the token in localStorage
+            // localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(response.data))
+
+            // Dispatch the loginSuccess action with token and userRole
+            dispatch(loginSuccess({ token, userRole }));
+
+            // Redirect user based on role
+            if (userRole === 'ROLE_ADMIN') {
+                navigate('/employees');
+                console.log('employees');
+                
+            } else {
+                console.log("normal Employee");
+                
+                navigate('/employee');
+            }
+        } else {
+            console.error('Missing token or userRole in response');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        dispatch(loginFailure(error.message));
+        navigate('/');  
+    });
+    }
 
     const handleRoleChange = (e) => {
         const { value, checked } = e.target;
@@ -636,4 +668,3 @@ export default EntryPage;
 // // };
 
 // // export default EntryPage;
-

@@ -7,10 +7,11 @@ import store from './store/store.js'
 
 
 createRoot(document.getElementById('root')).render(
-  
-    <Provider store={store} >
+  <>
+     <Provider store={store} >
       <App />
+      
     </Provider>
     
-  
+  </>
 )

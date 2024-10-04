@@ -7,6 +7,8 @@ const ListOfEmployee = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { employees, loading, error } = useSelector((state) => state.employee);
+    console.log(employees);
+    const user = JSON.parse(localStorage.getItem('user'));
 
     useEffect(() => {
         dispatch(fetchEmployees());
@@ -29,6 +31,8 @@ const ListOfEmployee = () => {
    ))
 
     return (
+        <>
+        {!user?.employeeDto ? <h1 className='container mt-5 text-center text-danger'>Please Login</h1> :
         <div className='container' style={{ margin: '90px' }}>
             <h2 className='text-center'>List Of Employees</h2>
             <button className='btn btn-primary mb-2' onClick={addNewEmployee} >Add Employee</button>
@@ -61,7 +65,8 @@ const ListOfEmployee = () => {
                     ))}
                 </tbody>
             </table>
-        </div>
+        </div>}
+        </>
     );
 };
 

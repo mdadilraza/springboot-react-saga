@@ -49,6 +49,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
 
      List<EmployeeDto>  allEmployees  =employeeService.getAllEmployees();
+     log.info("allEmployees : {}" ,allEmployees);
      return   ResponseEntity.ok(allEmployees);
     }
 

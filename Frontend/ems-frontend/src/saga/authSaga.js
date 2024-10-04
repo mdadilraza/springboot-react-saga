@@ -1,12 +1,24 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { loginRequest, loginSuccess, loginFailure, registerRequest, registerSuccess, registerFailure } from '../slices/authSlice';
  import { loginEmployee, registerEmployee } from '../services/AuthEmployeeService';
 
 
-function* handleLogin(action) {
+async function loginApi(employee) {
     try {
-        const response = yield call(loginEmployee, action.payload);
-        localStorage.setItem("token", response.data.token);
+        const response = await loginEmployee(employee);
+        console.log(response.data);
+        return response.data
+    } catch (error) {
+        console.log(error);
+        return error
+    }
+}
+
+function* handleLogin(action) {
+    console.log(action.payload)
+    try {
+        const response = yield call(loginApi, action.payload);
+        localStorage.setItem("user", response.data);
         yield put(loginSuccess(response.data));
     } catch (error) {
         yield put(loginFailure(error.response.data));
@@ -23,6 +35,6 @@ function* handleRegister(action) {
 }
 
 export function* authSaga() {
-    yield takeLatest(loginRequest.type, handleLogin);
+    yield takeEvery(loginRequest.type , handleLogin);
     yield takeLatest(registerRequest.type, handleRegister);
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 public class JwtGenerator {
 
-    public long JWT_EXPIRATION = 1000*60*60*60*24L;
+    public long JWT_EXPIRATION = 1000 * 60 * 30;
     private Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     public String generateToken(Authentication authentication) {

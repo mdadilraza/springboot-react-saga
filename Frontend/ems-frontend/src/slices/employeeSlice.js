@@ -4,6 +4,8 @@ import { listOfEmployess, createEmployee, updateEmployee, deleteEmployee, getEmp
 // Async Thunks
 export const fetchEmployees = createAsyncThunk('employees/fetchEmployees', async () => {
     const response = await listOfEmployess();
+    console.log(response.data);
+    
     return response.data;
 });
 
@@ -32,7 +34,7 @@ const employeeSlice = createSlice({
     name: 'employee',
     initialState: {
         employees: [],
-        employee: null,
+        employee: {},
         loading: false,
         error: null,
     },
@@ -69,10 +71,11 @@ const employeeSlice = createSlice({
                 state.error = action.error.message;
             })
             .addCase(editEmployee.fulfilled, (state, action) => {
-                const index = state.employees.findIndex(emp => emp.id === action.payload.id);
-                if (index !== -1) {
-                    state.employees[index] = action.payload;
-                }
+                state.employee=action.payload
+                // const index = state.employees.findIndex(emp => emp.id === action.payload.id);
+                // if (index !== -1) {
+                //     state.employees[index] = action.payload;
+                // }
             })
             .addCase(removeEmployee.fulfilled, (state, action) => {
                 state.employees = state.employees.filter(emp => emp.id !== action.payload);
