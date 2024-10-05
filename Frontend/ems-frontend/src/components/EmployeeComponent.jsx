@@ -54,10 +54,12 @@ const EmployeeComponent = () => {
         if (validateForm()) {
             if (id) {
                 dispatch(editEmployee({ id, employee: newEmployee }));
+                navigate('/employees');
             } else {
                 dispatch(addEmployee(newEmployee));
+                navigate('/employees');
             }
-            navigate('/employees');
+            
         }
     };
 

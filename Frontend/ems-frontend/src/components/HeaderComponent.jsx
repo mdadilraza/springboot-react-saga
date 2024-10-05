@@ -11,7 +11,8 @@ const HeaderComponent = () => {
     navigate('/'); 
   };
 
-  const showProfileAndLogout = location.pathname === '/employees';
+  const isUserAdmin = user?.employeeDto?.roles?.includes('ROLE_ADMIN');
+  const showProfileAndLogout = location.pathname === '/employees' && user?.employeeDto?.roles;
 
   return (
     <header style={styles.header}>

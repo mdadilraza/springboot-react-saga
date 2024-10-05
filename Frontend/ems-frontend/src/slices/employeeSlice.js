@@ -71,11 +71,13 @@ const employeeSlice = createSlice({
                 state.error = action.error.message;
             })
             .addCase(editEmployee.fulfilled, (state, action) => {
-                state.employee=action.payload
+                state.loading=false
+               // state.employee=action.payload
                 // const index = state.employees.findIndex(emp => emp.id === action.payload.id);
                 // if (index !== -1) {
                 //     state.employees[index] = action.payload;
                 // }
+                state.employees.push(action.payload);
             })
             .addCase(removeEmployee.fulfilled, (state, action) => {
                 state.employees = state.employees.filter(emp => emp.id !== action.payload);

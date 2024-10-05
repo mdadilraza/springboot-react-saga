@@ -1,33 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';  
+import { useDispatch } from 'react-redux';
 import { editEmployee } from '../slices/employeeSlice';
 import { useNavigate } from 'react-router-dom';
 
 function EmployeeProfile() {
-  const employee = useSelector(state => state.employee.employee);  
-  const dispatch = useDispatch();  
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Local state for managing profile
+  // State for managing profile
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [id, setId] = useState('');
-  const [roles, setRoles] = useState([]);  
-  const [isEditing, setIsEditing] = useState(false); 
+  const [roles, setRoles] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [currentEmployee, setCurrentEmployee] = useState(null);
- let user = null;
+  const [user, setUser] = useState(null);  
+
   useEffect(() => {
-    user = JSON.parse(localStorage.getItem('user'));
-    if (user && user.employeeDto) {
-      setName(`${user.employeeDto.firstName} ${user.employeeDto.lastName}`);
-      setEmail(user.employeeDto.email);
-      setId(user.employeeDto.id);
-      setFirstName(user.employeeDto.firstName);
-      setLastName(user.employeeDto.lastName);
-      setRoles([...user.employeeDto.roles]);
-      setCurrentEmployee({ ...user.employeeDto }); 
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    console.log(storedUser);
+    if (storedUser && storedUser.employeeDto) {
+      setUser(storedUser);  
+      setName(`${storedUser.employeeDto.firstName} ${storedUser.employeeDto.lastName}`);
+      setEmail(storedUser.employeeDto.email);
+      setId(storedUser.employeeDto.id);
+      setFirstName(storedUser.employeeDto.firstName);
+      setLastName(storedUser.employeeDto.lastName);
+      setRoles([...storedUser.employeeDto.roles]);
+      setCurrentEmployee({ ...storedUser.employeeDto });
     }
   }, []);
 
@@ -47,7 +49,7 @@ function EmployeeProfile() {
     // Dispatch the update action
     const result = await dispatch(editEmployee({ id, employee: updatedEmployee }));
     if (result && result.payload) {
-      const updatedUser = { ...JSON.parse(localStorage.getItem('user')) };
+      const updatedUser = { ...user };  
       updatedUser.employeeDto.firstName = firstName;
       updatedUser.employeeDto.lastName = lastName;
       updatedUser.employeeDto.email = email;
@@ -71,72 +73,73 @@ function EmployeeProfile() {
 
   return (
     <>
-    
-    {!user?.employeeDto ? <h1 className='container mt-5 text-center text-danger'>Please Login</h1>:
-    <div style={styles.container}>
-      <h2>Employee Profile</h2>
-
-      {isEditing ? (
-        <form style={styles.form} onSubmit={handleSave}>
-          <div style={styles.formGroup}>
-            <label>First Name:</label>
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
-          </div>
-          <div style={styles.formGroup}>
-            <label>Last Name:</label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
-          </div>
-          <div style={styles.formGroup}>
-            <label>Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              readOnly
-            />
-          </div>
-
-          <div style={styles.buttonGroup}>
-            <button type="submit" style={styles.button}>
-              Save
-            </button>
-            <button type="button" style={styles.button} onClick={handleCancelEdit}>
-              Cancel
-            </button>
-          </div>
-        </form>
+      {!user?.employeeDto ? (
+        <h1 className='container mt-5 text-center text-danger'>Please Login</h1>
       ) : (
-        <>
-          <div style={styles.info}>
-            <strong>Name:</strong> {name || 'No name found'}
-          </div>
-          <div style={styles.info}>
-            <strong>Email:</strong> {email || 'No email found'}
-          </div>
+        <div style={styles.container}>
+          <h2>Employee Profile</h2>
 
-          <div style={styles.buttonGroup}>
-            <button style={styles.button} onClick={handleEditClick}>
-              Edit Profile
-            </button>
-            <button style={styles.button} onClick={logout}>
-              Logout
-            </button>
-          </div>
-        </>
+          {isEditing ? (
+            <form style={styles.form} onSubmit={handleSave}>
+              <div style={styles.formGroup}>
+                <label>First Name:</label>
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+              </div>
+              <div style={styles.formGroup}>
+                <label>Last Name:</label>
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+              </div>
+              <div style={styles.formGroup}>
+                <label>Email:</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  readOnly
+                />
+              </div>
+
+              <div style={styles.buttonGroup}>
+                <button type="submit" style={styles.button}>
+                  Save
+                </button>
+                <button type="button" style={styles.button} onClick={handleCancelEdit}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <>
+              <div style={styles.info}>
+                <strong>Name:</strong> {name || 'No name found'}
+              </div>
+              <div style={styles.info}>
+                <strong>Email:</strong> {email || 'No email found'}
+              </div>
+
+              <div style={styles.buttonGroup}>
+                <button style={styles.button} onClick={handleEditClick}>
+                  Edit Profile
+                </button>
+                <button style={styles.button} onClick={logout}>
+                  Logout
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       )}
-    </div>
-    }
     </>
   );
 }
